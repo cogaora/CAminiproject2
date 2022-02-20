@@ -5,7 +5,6 @@ use ieee.numeric_std.all;
 entity cache is
 generic(
 	ram_size : INTEGER := 32768;
-	cache_size: INTEGER := 32;
 );
 port(
 	clock : in std_logic;
@@ -29,38 +28,13 @@ port(
 end cache;
 
 architecture arch of cache is
-	TYPE CacheState is (idle, read, write, memread, memwrite);
-	SIGNAL state : CacheState;
-	TYPE CacheStructure is ARRAY(cache_size-1 downto 0) OF STD_LOGIC_VECTOR (154 downto 0);
-	TYPE MEM IS ARRAY(ram_size-1 downto 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
+
+-- declare signals here
+TYPE CacheState is (read, write, );
+signal state : CacheState;
+
 begin
 
-process(clock, reset)
-begin
-	if (reset = '1') then
-    		state <= idle;
-    
-  	elsif rising_edge(clock) then
-		case state is
-			when idle =>
-			
-			if s_write = '1' AND  then
-          			state <= write;
-			elsif
-        		elsif s_read = '1' then
-				state <= read;
-			else 
-         	 		state <= idle;
-        		end if;
-			
-			when write =>
-			
-			
-        
-        
-		 
-end process;
-
-
+-- make circuits here
 
 end arch;

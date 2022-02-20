@@ -115,36 +115,7 @@ end process;
 test_process : process
 begin
 
-	-- write t
-	address <= 12; -- specify address we want to write to
-	s_write <= '1'; -- indicate we want to write
-	s_writedata <= x'12'; -- specify data to be written to cache (and memory)
-	
-		
-	
-	-- perform read, on invalid bit (not in memory, not in cache)
-	wait for clk_period;
-        address <= 14; -- an address to read from in cache
-        s_read <= '1'; -- indicate expecting to read data from cache
-	wait until rising_edge(waitrequest); -- wait until read complete
-	assert readdata = x"12" report "read unsuccessful" severity error;
-        
-	-- reset state of test
-	s_read <= '0';
-        wait for clk_period;
-        
-	address <= 12;
-	memread <= '1';
-        wait until rising_edge(waitrequest);
-        
-	assert readdata = x"0c" report "write unsuccessful" severity error;
-        memread <= '0';
-        wait;
--- read, miss + dirty (not possible ?)
--- read, hit
--- read, hit + stale
--- read, hit + dirty
--- read, miss + stale (not possible?)
+-- put your tests here
 	
 end process;
 	
