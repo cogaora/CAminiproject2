@@ -29,38 +29,87 @@ port(
 end cache;
 
 architecture arch of cache is
-	TYPE CacheState is (idle, read, write, memread, memwrite);
+	TYPE CacheState is (idle, cread, cwrite, memread, memwrite, check_addr_w, check_addr_r);
 	SIGNAL state : CacheState;
-	TYPE CacheStructure is ARRAY(cache_size-1 downto 0) OF STD_LOGIC_VECTOR (154 downto 0);
+	TYPE DirtyValid is ARRAY(cache_size-1 downto 0) of std_logic_vector (1 downto 0);
+	TYPE TagArr is ARRAY(cache_size-1 downto 0) of std_logic_vector (5 downto 0);
+
+	SIGNAL DV : DirtyValid;  -- (dirty bit, valid bit)
+	SIGNAL tags : TagArr;
+	TYPE CacheStructure is ARRAY(cache_size-1 downto 0) OF STD_LOGIC_VECTOR (127 downto 0);
 	TYPE MEM IS ARRAY(ram_size-1 downto 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
+	SIGNAL CacheBlock: CacheStructure;
+
+	SUBTYPE block_offset is s_addr(0 to 1);
+	SUBTYPE set is s_addr(2 to 6);
+	SUBTYPE tag is s_addr(7 to 12);
+
 begin
 
 process(clock, reset)
 begin
-	if (reset = '1') then
+	--initalise cache and dirty/valid vector
+	if (now < 1 ps)THEN
+			for i in 0 to cache_size-1 loop
+				CacheBlock(i) <= std_logic_vector(to_unsigned(i,128));
+				DV(i) <= 0;
+			end loop;
+	end if;
+
+	if (reset'event and reset = '1') then
     		state <= idle;
+    		for i in 0 to cache_size-1 loop
+				CacheBlock(i) <= std_logic_vector(to_unsigned(i,128));
+				DV(i) <= 0;
+			end loop;
+
     
   	elsif rising_edge(clock) then
 		case state is
 			when idle =>
+
+				if(clock'event and clock = '1') then
+				--update value of input address
+					block_offset <= s_addr(0 to 1);
+		 			set <= s_addr(2 to 6);
+		 			tag <= s_addr(7 to 12);
+
+		 			if s_write = '1' then
+		          		state <= check_addr_w;
+					elsif s_read = '1' then
+						state <= check_addr_r;
+					else 
+		         	 	state <= idle;
+			 		end if;
+	        	end if;
+
+			--check if block valid and not dirty
+			when check_addr_w =>
+				if (DV(set, 0) = '1') then
+					if(DV(set, 1) = '0') then
+						state <= cwrite;
+
+					else
+						state <= memwrite;
+					end if;
+
+				else
+					state <= memwrite;
+				end if;
 			
-			if s_write = '1' AND  then
-          			state <= write;
-			elsif
-        		elsif s_read = '1' then
-				state <= read;
-			else 
-         	 		state <= idle;
-        		end if;
-			
-			when write =>
-			
-			
-        
-        
-		 
+			when cwrite =>
+				CacheBlock(s_addr) <= s_writedata;
+				state <= idle;
+
+			when memwrite =>
+				m_writedata <= CacheBlock(s_addr);
+				DV(set, 0) <= '0';
+				DV(set, 1) <= '0';
+				state <= cwrite;
+
+
+		end case;
+
+	end if;
 end process;
-
-
-
 end arch;
