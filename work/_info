@@ -13,14 +13,14 @@ w1645490781
 Z0 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
 Z1 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z2 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
-Z3 dP:/Mini-project2
+dP:/Mini-project2
 8P:/Mini-project2/cache.vhd
 FP:/Mini-project2/cache.vhd
 l0
 L5
 VKL8C8o<3GI_]LB17^`Jik1
 !s100 JKN4kD]So]dYC3e[[mFaC0
-Z4 OV;C;10.3d;59
+OV;C;10.3d;59
 32
 !s110 1645490787
 !i10b 1
@@ -28,46 +28,83 @@ Z4 OV;C;10.3d;59
 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|P:/Mini-project2/cache.vhd|
 !s107 P:/Mini-project2/cache.vhd|
 !i113 1
-Z5 o-work work -2002 -explicit
-Z6 tExplicit 1
+o-work work -2002 -explicit
+Z3 tExplicit 1
 Ememory
-Z7 w1609780044
+Z4 w1645316904
 R0
 R1
 R2
-R3
-Z8 8P:/Mini-project2/memory.vhd
-Z9 FP:/Mini-project2/memory.vhd
+Z5 dP:/ecse425/CAminiproject2
+Z6 8memory.vhd
+Z7 Fmemory.vhd
 l0
 L6
-V3[GFESfBFlN?]XhW4L:h93
+Vd7EP2Tlll;ISiCcjC6hCl3
 !s100 TL`MNK5NTn0=f?i`Ph2JS3
-R4
+Z8 OV;C;10.4b;61
 32
-Z10 !s110 1645486491
+Z9 !s110 1645495153
 !i10b 1
-Z11 !s108 1645486490.445000
-Z12 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|P:/Mini-project2/memory.vhd|
-Z13 !s107 P:/Mini-project2/memory.vhd|
+Z10 !s108 1645495153.000000
+Z11 !s90 -reportprogress|300|memory.vhd|
+Z12 !s107 memory.vhd|
 !i113 1
-R5
-R6
+R3
 Artl
 R0
 R1
 R2
-DEx4 work 6 memory 0 22 3[GFESfBFlN?]XhW4L:h93
+DEx4 work 6 memory 0 22 d7EP2Tlll;ISiCcjC6hCl3
 l29
 L23
-VzJUIh46<`VEmIHC0<OP2j0
+V:72DcI]IPBW`J[TBgF_8a0
 !s100 Fl5=Y6J][VGa6l_6YBKG33
-R4
+R8
 32
-R10
+R9
 !i10b 1
+R10
 R11
 R12
-R13
 !i113 1
+R3
+Ememory_tb
+R4
+R0
+R1
+R2
 R5
-R6
+Z13 8memory_tb.vhd
+Z14 Fmemory_tb.vhd
+l0
+L5
+V3hT_KoVS6N2_[C@G]oJQT3
+!s100 K:h_7;_e46:2;TAj@4dAB3
+R8
+32
+R9
+!i10b 1
+R10
+Z15 !s90 -reportprogress|300|memory_tb.vhd|
+Z16 !s107 memory_tb.vhd|
+!i113 1
+R3
+Abehaviour
+R0
+R1
+R2
+DEx4 work 9 memory_tb 0 22 3hT_KoVS6N2_[C@G]oJQT3
+l38
+L8
+VZFKoDXS=5LzCaRV8ELSaY2
+!s100 :i96VH_8DL4G91ZkR7MdH1
+R8
+32
+R9
+!i10b 1
+R10
+R15
+R16
+!i113 1
+R3
