@@ -8,3 +8,66 @@ z2
 !i10f 100
 cModel Technology
 dC:/ProgramFolder/altera/15.0
+Ecache
+w1645490781
+Z0 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
+Z1 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
+Z2 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
+Z3 dP:/Mini-project2
+8P:/Mini-project2/cache.vhd
+FP:/Mini-project2/cache.vhd
+l0
+L5
+VKL8C8o<3GI_]LB17^`Jik1
+!s100 JKN4kD]So]dYC3e[[mFaC0
+Z4 OV;C;10.3d;59
+32
+!s110 1645490787
+!i10b 1
+!s108 1645490787.579000
+!s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|P:/Mini-project2/cache.vhd|
+!s107 P:/Mini-project2/cache.vhd|
+!i113 1
+Z5 o-work work -2002 -explicit
+Z6 tExplicit 1
+Ememory
+Z7 w1609780044
+R0
+R1
+R2
+R3
+Z8 8P:/Mini-project2/memory.vhd
+Z9 FP:/Mini-project2/memory.vhd
+l0
+L6
+V3[GFESfBFlN?]XhW4L:h93
+!s100 TL`MNK5NTn0=f?i`Ph2JS3
+R4
+32
+Z10 !s110 1645486491
+!i10b 1
+Z11 !s108 1645486490.445000
+Z12 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|P:/Mini-project2/memory.vhd|
+Z13 !s107 P:/Mini-project2/memory.vhd|
+!i113 1
+R5
+R6
+Artl
+R0
+R1
+R2
+DEx4 work 6 memory 0 22 3[GFESfBFlN?]XhW4L:h93
+l29
+L23
+VzJUIh46<`VEmIHC0<OP2j0
+!s100 Fl5=Y6J][VGa6l_6YBKG33
+R4
+32
+R10
+!i10b 1
+R11
+R12
+R13
+!i113 1
+R5
+R6

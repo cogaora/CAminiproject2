@@ -5,7 +5,7 @@ use ieee.numeric_std.all;
 entity cache is
 generic(
 	ram_size : INTEGER := 32768;
-	cache_size: INTEGER := 32;
+	cache_size: INTEGER := 32
 );
 port(
 	clock : in std_logic;
@@ -31,18 +31,19 @@ end cache;
 architecture arch of cache is
 	TYPE CacheState is (idle, cread, cwrite, memread, memwrite, check_addr_w, check_addr_r);
 	SIGNAL state : CacheState;
-	TYPE DirtyValid is ARRAY(cache_size-1 downto 0) of std_logic_vector (1 downto 0);
+	TYPE DirtyValid is ARRAY(cache_size-1 downto 0) of std_logic_vector(0 to 0);
 	TYPE TagArr is ARRAY(cache_size-1 downto 0) of std_logic_vector (5 downto 0);
 
-	SIGNAL DV : DirtyValid;  -- (dirty bit, valid bit)
+	SIGNAL dirty : DirtyValid;  -- (dirty bit, valid bit)
+	SIGNAL valid : DirtyValid;
 	SIGNAL tags : TagArr;
 	TYPE CacheStructure is ARRAY(cache_size-1 downto 0) OF STD_LOGIC_VECTOR (127 downto 0);
 	TYPE MEM IS ARRAY(ram_size-1 downto 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
 	SIGNAL CacheBlock: CacheStructure;
 
-	SUBTYPE block_offset is s_addr(0 to 1);
-	SUBTYPE set is s_addr(2 to 6);
-	SUBTYPE tag is s_addr(7 to 12);
+	alias block_offset is s_addr(1 downto 0);
+	alias set is s_addr(6 downto 2);
+	alias tag is s_addr(12 downto 7);
 
 begin
 
@@ -52,7 +53,8 @@ begin
 	if (now < 1 ps)THEN
 			for i in 0 to cache_size-1 loop
 				CacheBlock(i) <= std_logic_vector(to_unsigned(i,128));
-				DV(i) <= 0;
+				dirty(i) <= "0";
+				valid(i) <= "0";
 			end loop;
 	end if;
 
@@ -60,7 +62,8 @@ begin
     		state <= idle;
     		for i in 0 to cache_size-1 loop
 				CacheBlock(i) <= std_logic_vector(to_unsigned(i,128));
-				DV(i) <= 0;
+				dirty(i) <= "0";
+				valid(i) <= "0";
 			end loop;
 
     
@@ -70,9 +73,9 @@ begin
 
 				if(clock'event and clock = '1') then
 				--update value of input address
-					block_offset <= s_addr(0 to 1);
-		 			set <= s_addr(2 to 6);
-		 			tag <= s_addr(7 to 12);
+					--block_offset <= s_addr(0 to 1);
+		 			--set <= s_addr(2 to 6);
+		 			--tag <= s_addr(7 to 12);
 
 		 			if s_write = '1' then
 		          		state <= check_addr_w;
@@ -85,8 +88,8 @@ begin
 
 			--check if block valid and not dirty
 			when check_addr_w =>
-				if (DV(set, 0) = '1') then
-					if(DV(set, 1) = '0') then
+				if (valid(set) = "1") then
+					if(dirty(set) = "0") then
 						state <= cwrite;
 
 					else
@@ -103,8 +106,8 @@ begin
 
 			when memwrite =>
 				m_writedata <= CacheBlock(s_addr);
-				DV(set, 0) <= '0';
-				DV(set, 1) <= '0';
+				valid(set) <= "0";
+				dirty(set) <= "0";
 				state <= cwrite;
 
 
