@@ -34,8 +34,8 @@ ARCHITECTURE arch OF cache IS
 	TYPE DirtyValid IS ARRAY(cache_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR(0 TO 0);
 	TYPE TagArr IS ARRAY(cache_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR (5 DOWNTO 0);
 
-	SIGNAL dirty : DirtyValid; -- (dirty bit, valid bit)
-	SIGNAL valid : DirtyValid;
+	SIGNAL dirty : DirtyValid; -- (dirty bit)
+	SIGNAL valid : DirtyValid; -- (valid bit)
 	SIGNAL tags : TagArr;
 	TYPE CacheStructure IS ARRAY(cache_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR (127 DOWNTO 0);
 	TYPE MEM IS ARRAY(ram_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR(7 DOWNTO 0);
@@ -45,17 +45,18 @@ ARCHITECTURE arch OF cache IS
 	-- shouldn't we define that below when starting our process?
 	ALIAS set IS s_addr(6 DOWNTO 2); -- here defines the index of the block we're looking at
 	ALIAS tag IS s_addr(12 DOWNTO 7); -- here identifies which bblock we have from memory
-
+	
 BEGIN
 
 	PROCESS (clock, reset)
 		VARIABLE tmp_mem_addr : INTEGER := 0;
 		VARIABLE block_offset_int : INTEGER := 0;
 		VARIABLE mem_bytes_offset : INTEGER := 0;
+		VARIABLE set_int : INTEGER := 0;
 	BEGIN
 		-- load the block offset as an integer from the block signal above (easier to access cache mem)
 		block_offset_int := to_integer(unsigned(block_offset));
-
+		set_int := to_integer(unsigned(set));
 		--initalise cache and dirty/valid vector
 		IF (now < 1 ps) THEN
 			FOR i IN 0 TO cache_size - 1 LOOP
@@ -100,15 +101,15 @@ BEGIN
 				WHEN check_addr_r =>
 					-- ?? do we need to check for dirty bit here?
 					-- check if is valid
-					IF (valid(set)(0) = "1") THEN
+					IF (valid(set_int) = "1") THEN
 						-- check if tag match
-						IF (tags(set) = tag) THEN
+						IF (tags(set_int) = tag) THEN
 							-- start reading from cache and writing to the output read data vector
 							-- each block stores 16 bytes of data, i.e. 4 words, we wish to access 1 word
 							-- i.e. 4 bytes of data - and put it into our readdata signal
 							-- block_offset_int goes from 0 to 3, accessing lower word is 31 downto 0
 							-- accessing 4th word is 127 down to 96
-							s_readdata <= CacheBlock(set)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
+							s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
 							-- done reading go back to idle state after returning data
 							s_waitrequest <= '0';
 							state <= idle;
@@ -121,18 +122,21 @@ BEGIN
 						-- miss but the data is not valid, need to write to memory ? - previous round didn't clean up data
 						-- dirty or stale?
 					END IF;
+				
+				WHEN cread =>
+					state <= idle;
 
 				WHEN memread =>
 					-- memory ready to read more
 					IF m_waitrequest = '1' THEN
 						-- give memory an address to read from
-						m_addr <= s_addr(14 DOWNTO 0) + mem_bytes_offset;
+						m_addr <= (to_integer(unsigned(s_addr))) + mem_bytes_offset;
 						m_read <= '1';
 						m_write <= '0';
-						next_state <= memread;
+						state <= memread;
 					ELSIF m_waitrequest = '0' AND mem_bytes_offset > 3 THEN
 						-- have completed reading 1 word from memory
-						s_readdata <= CacheBlock(set)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
+						s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
 						-- done reading from memory & added retrieved data from memory to cache
 						s_waitrequest <= '0';
 						-- done reading & writing from memory
@@ -150,19 +154,19 @@ BEGIN
 						-- fourth 103 down to 96
 						-- get tmp address to find in cache block right byte
 						tmp_mem_addr := (32 * block_offset_int) + 8 * mem_bytes_offset;
-						CacheBlock(set)(tmp_mem_addr + 7 DOWNTO tmp_mem_addr) <= m_readdata;
+						CacheBlock(set_int)(tmp_mem_addr + 7 DOWNTO tmp_mem_addr) <= m_readdata;
 						-- increment cache block offset
 						mem_bytes_offset := mem_bytes_offset + 1;
 						state <= memread;
 					ELSE
 						-- memory not ready to read more, wait until then
-						next_state <= memread;
+						state <= memread;
 					END IF;
 
 					--check if block valid and not dirty
 				WHEN check_addr_w =>
-					IF (valid(set) = "1") THEN
-						IF (dirty(set) = "0") THEN
+					IF (valid(set_int) = "1") THEN
+						IF (dirty(set_int) = "0") THEN
 							state <= cwrite;
 
 						ELSE
@@ -174,13 +178,16 @@ BEGIN
 					END IF;
 
 				WHEN cwrite =>
-					CacheBlock(s_addr) <= s_writedata;
+					CacheBlock(set_int*128 + mem_bytes_offset) <= s_writedata;
+					valid(set_int) <= "1";
+					dirty(set_int) <= "1";
 					state <= idle;
 
 				WHEN memwrite =>
-					m_writedata <= CacheBlock(s_addr);
-					valid(set) <= "0";
-					dirty(set) <= "0";
+					valid(set_int) <= "0";
+					m_writedata <= CacheBlock(set_int*128 + mem_bytes_offset);
+					valid(set_int) <= "1";
+					dirty(set_int) <= "0";
 					state <= cwrite;
 			END CASE;
 
