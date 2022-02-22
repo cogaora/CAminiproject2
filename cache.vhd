@@ -42,13 +42,19 @@ architecture arch of cache is
 	SIGNAL CacheBlock: CacheStructure;
 
 	alias block_offset is s_addr(1 downto 0);
-	alias set is s_addr(6 downto 2);
-	alias tag is s_addr(12 downto 7);
+-- shouldn't we define that below when starting our process?
+	alias set is s_addr(6 downto 2); -- here defines the index of the block we're looking at
+	alias tag is s_addr(12 downto 7); -- here identifies which bblock we have from memory
 
 begin
 
 process(clock, reset)
+	variable block_offset_int : INTEGER := 0;
+	variable mem_bytes_offset: INTEGER := 0;
 begin
+	-- load the block offset as an integer from the block signal above (easier to access cache mem)
+	block_offset_int := to_integer(unsigned(block_offset));
+	
 	--initalise cache and dirty/valid vector
 	if (now < 1 ps)THEN
 			for i in 0 to cache_size-1 loop
@@ -57,9 +63,11 @@ begin
 				valid(i) <= "0";
 			end loop;
 	end if;
-
+	
+	-- if reset, re-init cache & bits
 	if (reset'event and reset = '1') then
     		state <= idle;
+		-- iterate through cache blocks to reset
     		for i in 0 to cache_size-1 loop
 				CacheBlock(i) <= std_logic_vector(to_unsigned(i,128));
 				dirty(i) <= "0";
@@ -69,7 +77,9 @@ begin
     
   	elsif rising_edge(clock) then
 		case state is
+			-- starting in default state
 			when idle =>
+				s_waitrequest <= '1'; -- something is happening signal it to cache operator?
 
 				if(clock'event and clock = '1') then
 				--update value of input address
@@ -78,13 +88,42 @@ begin
 		 			--tag <= s_addr(7 to 12);
 
 		 			if s_write = '1' then
-		          		state <= check_addr_w;
+		        	  		state <= check_addr_w;
 					elsif s_read = '1' then
 						state <= check_addr_r;
 					else 
-		         	 	state <= idle;
+						s_waitrequest <= '0'; -- nothing is happening anymore
+		        	 	 	state <= idle;
 			 		end if;
-	        	end if;
+	        		end if;
+			
+			-- verify if we have a valid address for reading from memory
+			when check_addr_r =>
+				-- check if is valid
+				if (valid(set)(0) = "1") then
+					-- check if tag match
+					if (tags(set) = tag) then
+						-- start reading from cache and writing to the output read data vector
+						-- each block stores 16 bytes of data, i.e. 4 words, we wish to access 1 word
+						-- i.e. 4 bytes of data - and put it into our readdata signal
+						-- block_offset_int goes from 0 to 3, accessing lower word is 31 downto 0
+						-- accessing 4th word is 127 down to 96
+						s_readdata <= CacheBlock(set)((32*(block_offset_int+1))-1 downto 32*block_offset_int);
+-- done reading go back to idle state after returning data
+s_waitrequest <= '0';
+state <= idle;
+					else
+					-- means there was a miss, but data is clean 
+					-- should request data from memory and load it to cache
+															end if;
+				else
+				-- miss but the data is not valid, need to write to memory 	
+				end if;
+
+			when memread =>
+				
+			
+				 
 
 			--check if block valid and not dirty
 			when check_addr_w =>
