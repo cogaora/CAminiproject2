@@ -12,13 +12,13 @@ vcom cache.vhd
 vcom cache_tb.vhd
 
 ;# Start simulation
-vsim -t 100ps memory_tb
+vsim cache_tb
 
 ;# Generate a clock with 1ns period
-force -deposit clk 0 0 ns, 1 0.5 ns -repeat 1 ns
+;# force -deposit clk 0 0 ns, 1 0.5 ns -repeat 1 ns
 
 ;# Add the waves
 ;#AddWaves
 
-;# Run for 50 ns
-run 100ns
+;# Run for 1000 ns
+run 1000ns
