@@ -134,7 +134,7 @@ BEGIN
 						m_read <= '1';
 						m_write <= '0';
 						state <= memread;
-					ELSIF m_waitrequest = '0' AND mem_bytes_offset > 3 THEN
+					ELSIF m_waitrequest = '0' AND mem_bytes_offset > 3 THEN;,;'.;
 						-- have completed reading 1 word from memory
 						s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
 						-- done reading from memory & added retrieved data from memory to cache

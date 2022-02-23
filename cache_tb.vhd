@@ -9,7 +9,7 @@ ARCHITECTURE behavior OF cache_tb IS
 
     COMPONENT cache IS
         GENERIC (
-            ram_size : INTEGER := 32768;
+            ram_size : INTEGER := 32768
         );
         PORT (
             clock : IN STD_LOGIC;

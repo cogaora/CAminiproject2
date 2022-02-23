@@ -122,6 +122,9 @@ BEGIN
 						-- miss but the data is not valid, need to write to memory ? - previous round didn't clean up data
 						-- dirty or stale?
 					END IF;
+				
+				WHEN cread =>
+					state <= idle;
 
 				WHEN memread =>
 					-- memory ready to read more
