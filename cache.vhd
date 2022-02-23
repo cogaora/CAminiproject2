@@ -45,10 +45,9 @@ ARCHITECTURE arch OF cache IS
 	-- shouldn't we define that below when starting our process?
 	ALIAS set IS s_addr(6 DOWNTO 2); -- here defines the index of the block we're looking at
 	ALIAS tag IS s_addr(12 DOWNTO 7); -- here identifies which bblock we have from memory
-	
-BEGIN
 
-	PROCESS (clock, reset)
+BEGIN
+	PROCESS (clock, reset, s_read, s_write, state, tags, valid, dirty, CacheBlock)
 		VARIABLE tmp_mem_addr : INTEGER := 0;
 		VARIABLE block_offset_int : INTEGER := 0;
 		VARIABLE mem_bytes_offset : INTEGER := 0;
@@ -57,6 +56,7 @@ BEGIN
 		-- load the block offset as an integer from the block signal above (easier to access cache mem)
 		block_offset_int := to_integer(unsigned(block_offset));
 		set_int := to_integer(unsigned(set));
+
 		--initalise cache and dirty/valid vector
 		IF (now < 1 ps) THEN
 			FOR i IN 0 TO cache_size - 1 LOOP
@@ -99,44 +99,50 @@ BEGIN
 
 					-- verify if we have a valid address for reading from memory
 				WHEN check_addr_r =>
-					-- ?? do we need to check for dirty bit here?
-					-- check if is valid
-					IF (valid(set_int) = "1") THEN
-						-- check if tag match
-						IF (tags(set_int) = tag) THEN
-							-- start reading from cache and writing to the output read data vector
-							-- each block stores 16 bytes of data, i.e. 4 words, we wish to access 1 word
-							-- i.e. 4 bytes of data - and put it into our readdata signal
-							-- block_offset_int goes from 0 to 3, accessing lower word is 31 downto 0
-							-- accessing 4th word is 127 down to 96
-							s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
-							-- done reading go back to idle state after returning data
-							s_waitrequest <= '0';
-							state <= idle;
-						ELSE
-							-- means there was a miss, but data is clean 
-							-- should request data from memory and load it to cache
-							state <= memread;
-						END IF;
+					IF (valid(set_int) = "1") AND (tags(set_int) = tag) THEN
+						-- hit
+						-- start reading from cache and writing to the output read data vector
+						-- each block stores 16 bytes of data, i.e. 4 words, we wish to access 1 word
+						-- i.e. 4 bytes of data - and put it into our readdata signal
+						-- block_offset_int goes from 0 to 3, accessing lower word is 31 downto 0
+						-- accessing 4th word is 127 down to 96
+						s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
+						-- done reading go back to idle state after returning data
+						s_waitrequest <= '0';
+						state <= idle;
+					ELSIF dirty(set_int) = "1" THEN
+						-- dirty
+						-- write back to memory
+						state <= memwrite;
+					ELSIF valid(set_int) = "0" THEN
+						-- not dirty, but tag not valid, should read data from memory (and load it in cache)
+						state <= memread;
 					ELSE
-						-- miss but the data is not valid, need to write to memory ? - previous round didn't clean up data
-						-- dirty or stale?
+						-- means there was a miss, but data is clean 
+						-- should request data from memory and load it to cache
+						state <= check_addr_r;
 					END IF;
-				
+
 				WHEN cread =>
 					state <= idle;
 
 				WHEN memread =>
 					-- memory ready to read more
 					IF m_waitrequest = '1' THEN
-						-- give memory an address to read from
-						m_addr <= (to_integer(unsigned(s_addr))) + mem_bytes_offset;
+						-- give memory an address to read from, using the lower 15 bytes of the address
+						m_addr <= (to_integer(unsigned(s_addr(14 DOWNTO 0)))) + mem_bytes_offset;
 						m_read <= '1';
 						m_write <= '0';
 						state <= memread;
 					ELSIF m_waitrequest = '0' AND mem_bytes_offset > 3 THEN;,;'.;
 						-- have completed reading 1 word from memory
 						s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
+						-- update tag in cache memory for the block
+						tags(set_int) <= tag;
+						-- update clean & dirty tags
+						dirty(set_int) <= "0";
+						valid(set_int) <= "1";
+
 						-- done reading from memory & added retrieved data from memory to cache
 						s_waitrequest <= '0';
 						-- done reading & writing from memory
@@ -168,7 +174,6 @@ BEGIN
 					IF (valid(set_int) = "1") THEN
 						IF (dirty(set_int) = "0") THEN
 							state <= cwrite;
-
 						ELSE
 							state <= memwrite;
 						END IF;
@@ -178,14 +183,14 @@ BEGIN
 					END IF;
 
 				WHEN cwrite =>
-					CacheBlock(set_int*128 + mem_bytes_offset) <= s_writedata;
+					CacheBlock(set_int * 128 + mem_bytes_offset) <= s_writedata;
 					valid(set_int) <= "1";
 					dirty(set_int) <= "1";
 					state <= idle;
 
 				WHEN memwrite =>
 					valid(set_int) <= "0";
-					m_writedata <= CacheBlock(set_int*128 + mem_bytes_offset);
+					m_writedata <= CacheBlock(set_int * 128 + mem_bytes_offset);
 					valid(set_int) <= "1";
 					dirty(set_int) <= "0";
 					state <= cwrite;
