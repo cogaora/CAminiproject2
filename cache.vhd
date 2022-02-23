@@ -129,14 +129,20 @@ BEGIN
 				WHEN memread =>
 					-- memory ready to read more
 					IF m_waitrequest = '1' THEN
-						-- give memory an address to read from
-						m_addr <= (to_integer(unsigned(s_addr))) + mem_bytes_offset;
+						-- give memory an address to read from, using the lower 15 bytes of the address
+						m_addr <= (to_integer(unsigned(s_addr(14 DOWNTO 0)))) + mem_bytes_offset;
 						m_read <= '1';
 						m_write <= '0';
 						state <= memread;
 					ELSIF m_waitrequest = '0' AND mem_bytes_offset > 3 THEN
 						-- have completed reading 1 word from memory
 						s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
+						-- update tag in cache memory for the block
+						tags(set_int) <= tag;
+						-- update clean & dirty tags
+						dirty(set_int) <= "0";
+						valid(set_int) <= "1";
+
 						-- done reading from memory & added retrieved data from memory to cache
 						s_waitrequest <= '0';
 						-- done reading & writing from memory
@@ -168,7 +174,6 @@ BEGIN
 					IF (valid(set_int) = "1") THEN
 						IF (dirty(set_int) = "0") THEN
 							state <= cwrite;
-
 						ELSE
 							state <= memwrite;
 						END IF;
