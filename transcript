@@ -1,14 +1,76 @@
-# Compile of cache.vhd failed with 5 errors.
-# Compile of cache.vhd failed with 4 errors.
-# Compile of cache.vhd failed with 4 errors.
-# Compile of cache.vhd failed with 3 errors.
-# Compile of cache.vhd failed with 3 errors.
-# Compile of cache.vhd failed with 3 errors.
-# Compile of memory_tb.vhd was successful.
-# Compile of cache.vhd failed with 2 errors.
-# Compile of cache.vhd failed with 2 errors.
-# Compile of cache.vhd failed with 2 errors.
-# Compile of cache.vhd failed with 2 errors.
-# Compile of cache.vhd failed with 2 errors.
-# Compile of cache.vhd was successful with warnings.
-# Compile of cache_tb.vhd failed with 1 errors.
+# Reading C:/altera/15.1/modelsim_ase/tcl/vsim/pref.tcl
+# vsim -gui warning 
+# Start time: 15:26:59 on Feb 26,2022
+# ** Error: (vsim-3170) Could not find 'P:/ecse425/CAminiproject2/work.warning'.
+# 
+# Error loading design
+# End time: 15:26:59 on Feb 26,2022, Elapsed time: 0:00:00
+# Errors: 1, Warnings: 0
+source cache_tb.tcl
+# Model Technology ModelSim ALTERA vcom 10.4b Compiler 2015.05 May 27 2015
+# Start time: 15:27:09 on Feb 26,2022
+# vcom -reportprogress 300 memory.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity memory
+# -- Compiling architecture rtl of memory
+# End time: 15:27:09 on Feb 26,2022, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim ALTERA vcom 10.4b Compiler 2015.05 May 27 2015
+# Start time: 15:27:09 on Feb 26,2022
+# vcom -reportprogress 300 cache.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity cache
+# -- Compiling architecture arch of cache
+# ** Warning: cache.vhd(186): (vcom-1272) Length of expected is 128; length of actual is 32.
+# 
+# ** Warning: cache.vhd(193): (vcom-1272) Length of expected is 8; length of actual is 128.
+# 
+# End time: 15:27:09 on Feb 26,2022, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 2
+# Model Technology ModelSim ALTERA vcom 10.4b Compiler 2015.05 May 27 2015
+# Start time: 15:27:09 on Feb 26,2022
+# vcom -reportprogress 300 cache_tb.vhd 
+# -- Loading package STANDARD
+# -- Loading package TEXTIO
+# -- Loading package std_logic_1164
+# -- Loading package NUMERIC_STD
+# -- Compiling entity cache_tb
+# -- Compiling architecture behavior of cache_tb
+# End time: 15:27:09 on Feb 26,2022, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# vsim cache_tb 
+# Start time: 15:27:09 on Feb 26,2022
+# Loading std.standard
+# Loading std.textio(body)
+# Loading ieee.std_logic_1164(body)
+# Loading ieee.numeric_std(body)
+# Loading work.cache_tb(behavior)
+# Loading work.cache(arch)
+# Loading work.memory(rtl)
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /cache_tb/dut
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 0  Instance: /cache_tb/dut
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 1  Instance: /cache_tb/dut
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 0 ps  Iteration: 1  Instance: /cache_tb/dut
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 500 ps  Iteration: 1  Instance: /cache_tb/dut
+# ** Warning: NUMERIC_STD.TO_INTEGER: metavalue detected, returning 0
+#    Time: 500 ps  Iteration: 1  Instance: /cache_tb/dut
+# ** Fatal: (vsim-3734) Index value 3968 is out of range 31 downto 0.
+#    Time: 3500 ps  Iteration: 1  Process: /cache_tb/dut/line__50 File: cache.vhd
+# Fatal error in Process line__50 at cache.vhd line 193
+# 
+# HDL call sequence:
+# Stopped at cache.vhd 193 Process line__50
+# 
+# End time: 15:27:19 on Feb 26,2022, Elapsed time: 0:00:10
+# Errors: 2, Warnings: 6

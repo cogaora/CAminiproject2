@@ -9,36 +9,35 @@ z2
 cModel Technology
 dC:/ProgramFolder/altera/15.0
 Ecache
-Z0 w1645567416
+Z0 w1646003872
 Z1 DPx4 ieee 11 numeric_std 0 22 :ASDNFgHXf_ih3J@9F3Ze1
 Z2 DPx3 std 6 textio 0 22 zE1`LPoLg^DX3Oz^4Fj1K3
 Z3 DPx4 ieee 14 std_logic_1164 0 22 eNV`TJ_GofJTzYa?f<@Oe1
-Z4 dP:/Mini-project2
-Z5 8P:/Mini-project2/cache.vhd
-Z6 FP:/Mini-project2/cache.vhd
+Z4 dP:/ecse425/CAminiproject2
+Z5 8cache.vhd
+Z6 Fcache.vhd
 l0
 L5
-V2[QZWY3cA`U[X9Vbe:Gam1
+VJJOzWP:_C<6JCbgC5h`zG0
 !s100 V]IT^?G:3dW1^MzhcS?n81
-Z7 OV;C;10.3d;59
+Z7 OV;C;10.4b;61
 32
-Z8 !s110 1645567420
+Z8 !s110 1646004474
 !i10b 1
-Z9 !s108 1645567420.600000
-Z10 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|P:/Mini-project2/cache.vhd|
-Z11 !s107 P:/Mini-project2/cache.vhd|
+Z9 !s108 1646004473.000000
+Z10 !s90 -reportprogress|300|cache.vhd|
+Z11 !s107 cache.vhd|
 !i113 1
-Z12 o-work work -2002 -explicit
-Z13 tExplicit 1
+Z12 tExplicit 1
 Aarch
 R1
 R2
 R3
-DEx4 work 5 cache 0 22 2[QZWY3cA`U[X9Vbe:Gam1
-l49
+DEx4 work 5 cache 0 22 JJOzWP:_C<6JCbgC5h`zG0
+l48
 L31
-V0E6eJIe[fE6dXHI6=7IKC0
-!s100 _8?9COzhA^FF8LDNN`G173
+VQ:=<P;SLOg0A3bLFzozEc1
+!s100 ;4TKZDZ6a`:eJfMWB;e_Y0
 R7
 32
 R8
@@ -48,50 +47,66 @@ R10
 R11
 !i113 1
 R12
-R13
 Ecache_tb
-w1645568093
+Z13 w1646004462
 R1
 R2
 R3
 R4
-8P:/Mini-project2/cache_tb.vhd
-FP:/Mini-project2/cache_tb.vhd
+Z14 8cache_tb.vhd
+Z15 Fcache_tb.vhd
 l0
 L5
-VKnA2ZjYLd9@@:6K5i@=GG3
+VlN>B5UJRPkhgO`mH1VmoG1
 !s100 N8hTJD?ado=UI;TQE4:Ql3
 R7
 32
-!s110 1645568097
+R8
 !i10b 1
-!s108 1645568097.802000
-!s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|P:/Mini-project2/cache_tb.vhd|
-!s107 P:/Mini-project2/cache_tb.vhd|
+Z16 !s108 1646004474.000000
+Z17 !s90 -reportprogress|300|cache_tb.vhd|
+Z18 !s107 cache_tb.vhd|
 !i113 1
 R12
-R13
-Ememory
-Z14 w1645316904
+Abehavior
 R1
 R2
 R3
-Z15 dP:/ecse425/CAminiproject2
-Z16 8memory.vhd
-Z17 Fmemory.vhd
+Z19 DEx4 work 8 cache_tb 0 22 lN>B5UJRPkhgO`mH1VmoG1
+l71
+L8
+V?DkZ7Yg;eCnMI<NE:f:[42
+!s100 O=gMc_f8:29R]3]m``>GM2
+R7
+32
+R8
+!i10b 1
+R16
+R17
+R18
+!i113 1
+R12
+Ememory
+Z20 w1645907053
+R1
+R2
+R3
+R4
+Z21 8memory.vhd
+Z22 Fmemory.vhd
 l0
 L6
 Vd7EP2Tlll;ISiCcjC6hCl3
 !s100 TL`MNK5NTn0=f?i`Ph2JS3
-Z18 OV;C;10.4b;61
+R7
 32
-Z19 !s110 1645495153
+Z23 !s110 1646004473
 !i10b 1
-Z20 !s108 1645495153.000000
-Z21 !s90 -reportprogress|300|memory.vhd|
-Z22 !s107 memory.vhd|
+R9
+Z24 !s90 -reportprogress|300|memory.vhd|
+Z25 !s107 memory.vhd|
 !i113 1
-R13
+R12
 Artl
 R1
 R2
@@ -99,39 +114,39 @@ R3
 DEx4 work 6 memory 0 22 d7EP2Tlll;ISiCcjC6hCl3
 l29
 L23
-V:72DcI]IPBW`J[TBgF_8a0
-!s100 Fl5=Y6J][VGa6l_6YBKG33
-R18
+Vf:onfdc3`zK[e8FB>FLeo2
+!s100 eO4GG9KB^]m;m]0ioXWlk2
+R7
 32
-R19
+R23
 !i10b 1
-R20
-R21
-R22
+R9
+R24
+R25
 !i113 1
-R13
+R12
 Ememory_tb
-Z23 w1609780044
+Z26 w1609780044
 R1
 R2
 R3
-R4
-Z24 8P:/Mini-project2/memory_tb.vhd
-Z25 FP:/Mini-project2/memory_tb.vhd
+Z27 dP:/Mini-project2
+Z28 8P:/Mini-project2/memory_tb.vhd
+Z29 FP:/Mini-project2/memory_tb.vhd
 l0
 L5
 VgGm]0_Q;Aoc_27;Tl`z4A3
 !s100 K:h_7;_e46:2;TAj@4dAB3
-R7
+Z30 OV;C;10.3d;59
 32
-Z26 !s110 1645566538
+Z31 !s110 1645566538
 !i10b 1
-Z27 !s108 1645566538.816000
-Z28 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|P:/Mini-project2/memory_tb.vhd|
-Z29 !s107 P:/Mini-project2/memory_tb.vhd|
+Z32 !s108 1645566538.816000
+Z33 !s90 -reportprogress|300|-work|work|-2002|-explicit|-stats=none|P:/Mini-project2/memory_tb.vhd|
+Z34 !s107 P:/Mini-project2/memory_tb.vhd|
 !i113 1
+Z35 o-work work -2002 -explicit
 R12
-R13
 Abehaviour
 R1
 R2
@@ -141,13 +156,13 @@ l38
 L8
 VXDPz10O6IBmmZS>]]h[[f2
 !s100 :i96VH_8DL4G91ZkR7MdH1
-R7
+R30
 32
-R26
+R31
 !i10b 1
-R27
-R28
-R29
+R32
+R33
+R34
 !i113 1
+R35
 R12
-R13
