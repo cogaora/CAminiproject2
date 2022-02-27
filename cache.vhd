@@ -46,6 +46,7 @@ ARCHITECTURE arch OF cache IS
 	ALIAS tag IS s_addr(31 DOWNTO 7); -- here identifies which bblock we have from memory
 
 BEGIN
+
 	-- only sensitive to these signals (triggers available to other processes)
 	PROCESS (clock, reset, s_read, s_write, state, m_waitrequest)
 		VARIABLE tmp_mem_addr : INTEGER := 0;
@@ -67,14 +68,14 @@ BEGIN
 		END IF;
 
 		-- if reset, re-init cache & bits
-		IF (reset'event AND reset = '1') THEN
+		IF (reset = '1') THEN
 			state <= idle;
 			-- iterate through cache blocks to reset
-			FOR i IN 0 TO cache_size - 1 LOOP
-				CacheBlock(i) <= STD_LOGIC_VECTOR(to_unsigned(i MOD 256, 128));
-				dirty(i) <= "0";
-				valid(i) <= "0";
-			END LOOP;
+			--FOR i IN 0 TO cache_size - 1 LOOP
+			--	CacheBlock(i) <= STD_LOGIC_VECTOR(to_unsigned(i MOD 256, 128));
+			--	dirty(i) <= "0";
+			--	valid(i) <= "0";
+			--END LOOP;
 		ELSIF rising_edge(clock) THEN
 			CASE state IS
 					-- starting in default state
