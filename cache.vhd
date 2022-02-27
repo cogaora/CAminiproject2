@@ -32,7 +32,7 @@ ARCHITECTURE arch OF cache IS
 	TYPE CacheState IS (idle, memwrite_then_read, cwrite, memread, memwrite, check_addr_w, check_addr_r);
 	SIGNAL state : CacheState;
 	TYPE DirtyValid IS ARRAY(cache_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR(0 TO 0);
-	TYPE TagArr IS ARRAY(cache_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR (25 DOWNTO 0);
+	TYPE TagArr IS ARRAY(cache_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR (24 DOWNTO 0);
 
 	SIGNAL dirty : DirtyValid; -- (dirty bit)
 	SIGNAL valid : DirtyValid; -- (valid bit)
@@ -181,7 +181,7 @@ BEGIN
 					--check if block valid and not dirty
 				WHEN check_addr_w =>
 					-- if either dirty or invalid and tags different, i.e. miss dirty
-					IF (dirty(set_int) = "1") AND (valid(set_ind) = "0" OR tags(set_int) /= tag) THEN
+					IF (dirty(set_int) = "1") AND (valid(set_int) = "0" OR tags(set_int) /= tag) THEN
 						state <= memwrite;
 					ELSE
 						-- reset the tags to reflect recent writing
@@ -193,7 +193,7 @@ BEGIN
 					dirty(set_int) <= "1";
 					valid(set_int) <= "1";
 					tags(set_int) <= tag;
-					s_wait_request <= '0';
+					s_waitrequest <= '0';
 					state <= idle;
 
 				WHEN memwrite =>
