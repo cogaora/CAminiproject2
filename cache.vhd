@@ -32,7 +32,7 @@ ARCHITECTURE arch OF cache IS
 	TYPE CacheState IS (idle, memwrite_then_read, cwrite, memread, memwrite, check_addr_w, check_addr_r);
 	SIGNAL state : CacheState;
 	TYPE DirtyValid IS ARRAY(cache_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR(0 TO 0);
-	TYPE TagArr IS ARRAY(cache_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR (25 DOWNTO 0);
+	TYPE TagArr IS ARRAY(cache_size - 1 DOWNTO 0) OF STD_LOGIC_VECTOR (24 DOWNTO 0);
 
 	SIGNAL dirty : DirtyValid; -- (dirty bit)
 	SIGNAL valid : DirtyValid; -- (valid bit)
