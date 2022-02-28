@@ -119,23 +119,27 @@ BEGIN
         -- write, hit, dirty (cache should be in sync with memory (not possible per our fsm))
 
         WAIT FOR clk_period;
-	report "helloe";
+
 
         -- test 2 cases: write miss, not in memory and then valid read wo/ dirty
         s_addr <= "00000000000000000000000000001000";
         s_write <= '1';
-	s_read <= '0';
+        s_read <= '0';
         s_writedata <= x"AAAAAAAA";
         WAIT UNTIL rising_edge(s_waitrequest);
+
         -- now, read from same address and make sure it is in cache
         s_write <= '0';
         s_read <= '1';
+report "hey from here befroe reading";
         WAIT UNTIL rising_edge(s_waitrequest);
+report" done reading";
         ASSERT s_readdata = x"AAAAAAAA" REPORT "write unsuccessful" SEVERITY error;
         s_read <= '0';
         s_write <= '0';
 
         WAIT FOR clk_period;
+report "leoeo";
 
         -- test case of read clean miss - not in cache nor memory
         s_addr <= "00000000000000000000000000000000";
@@ -148,8 +152,14 @@ BEGIN
         s_read <= '0';
         s_write <= '0';
 
+report "3";
+
         WAIT FOR clk_period;
-	
+
+REPORT "helloe";
+
+        WAIT;
+
         -- test case for 
     END PROCESS;
 

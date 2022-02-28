@@ -77,9 +77,11 @@ BEGIN
 			--	valid(i) <= "0";
 			--END LOOP;
 		ELSIF rising_edge(clock) THEN
+
 			CASE state IS
 					-- starting in default state
 				WHEN idle =>
+report "in idle";
 					s_waitrequest <= '1'; -- something is happening signal it to cache operator?
 					IF s_write = '1' THEN
 						state <= check_addr_w;
@@ -92,7 +94,7 @@ BEGIN
 
 					-- verify if we have a valid address for reading from memory
 				WHEN check_addr_r =>
-					-- hit
+				-- hit
 					IF (valid(set_int) = "1") AND (tags(set_int) = tag) THEN
 						-- start reading from cache and writing to the output read data vector
 						-- each block stores 16 bytes of data, i.e. 4 words, we wish to access 1 word
@@ -102,25 +104,33 @@ BEGIN
 						s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
 						-- done reading go back to idle state after returning data
 						s_waitrequest <= '0';
+report "switch ack to idle";
 						state <= idle;
 
 						-- dirty
 					ELSIF dirty(set_int) = "1" AND (tags(set_int) /= tag) THEN
+	report "branching to the memwrite";
 						-- write back to memory
 						state <= memwrite_then_read;
 
 						-- not dirty, but tag not valid, 
-					ELSIF valid(set_int) = "0" AND (tags(set_int) /= tag) THEN
+					ELSIF valid(set_int) = "0" AND (tags(set_int) /= tag) THEN	
 						-- should read data from memory (and load it in cache)
+report "go to read memoru";
 						state <= memread;
 					ELSE
+
 						-- means there was a miss, but data is clean 
 						-- should request data from memory and load it to cache
+report "looping back to the read checking";
 						state <= check_addr_r;
 					END IF;
 
+
 				WHEN memwrite_then_read =>
+report "mem write starting";
 					IF m_waitrequest = '1' AND mem_bytes_offset <= 3 THEN
+report "starting to write to memory";
 						-- define the 15 bits address to replace block in memory
 						m_addr <= (to_integer(unsigned(s_addr(14 DOWNTO 0)))) + mem_bytes_offset;
 						m_read <= '0';
@@ -129,9 +139,11 @@ BEGIN
 						mem_bytes_offset := mem_bytes_offset + 1;
 						state <= memwrite_then_read;
 					ELSIF mem_bytes_offset > 3 THEN
+report "done writing to memory";
 						mem_bytes_offset := 0;
 						state <= memread;
 					ELSE
+report "no ned to write, ooping back";
 						m_write <= '0';
 						state <= memwrite_then_read;
 					END IF;
@@ -183,10 +195,12 @@ BEGIN
 				WHEN check_addr_w =>
 					-- if either dirty or invalid and tags different, i.e. miss dirty
 					IF (dirty(set_int) = "1") AND (valid(set_int) = "0" OR tags(set_int) /= tag) THEN
+report "go to write mmeory";
 						state <= memwrite;
 					ELSE
+report "going back to idle while writing";
 						-- reset the tags to reflect recent writing
-						state <= idle;
+						state <= cwrite;
 					END IF;
 
 				WHEN cwrite =>
