@@ -120,17 +120,40 @@ BEGIN
         s_writedata <= x"AAAAAAAA";
         WAIT UNTIL falling_edge(s_waitrequest);
 
-        -- now, read from same address and make sure it is in cache
-        --s_write <= '0';
-        --s_read <= '1';
-        --WAIT UNTIL falling_edge(s_waitrequest);
-        --ASSERT s_readdata = x"AAAAAAAA" REPORT "error" SEVERITY error;
-        --s_read <= '0';
-        --s_write <= '0';
+        -- test case of read clean miss - not in cache nor memory
+        --s_addr <= "00000000000000000000000000000000";
+        -- s_read <= '1';
+        -- s_write <= '0';
+        --  WAIT UNTIL falling_edge(s_waitrequest);
+        -- expecting a bunch of zeros from memory
+        --  ASSERT s_readdata = x"00000000" REPORT "error" SEVERITY error;
+        -- reset both write & read signals
+        --  s_read <= '0';
+        --  s_write <= '0';
 
+        -- test case for write hit
+        WAIT FOR clk_period;
+        s_addr <= "00000000000000000000000001000000";
+        s_write <= '1';
+        s_read <= '0';
+        s_writedata <= X"14";
+        WAIT UNTIL falling_edge(s_waitrequest);
+
+        -- test case for write to same address with dirty data
+        WAIT FOR clk_period;
+        s_addr <= "00000000000000000000000001000000";
+        s_write <= '1';
+        s_read <= '0';
+        s_writedata <= X"12";
+        WAIT UNTIL falling_edge(s_waitrequest);
+
+        -- check val correct
+        WAIT FOR clk_period;
+        s_addr <= "00000000000000000000000001000000";
+        s_write <= '0';
+        s_read <= '1';
+        ASSERT s_readdata = x"12" REPORT "error" SEVERITY error;
         WAIT;
-
-        -- test case for 
     END PROCESS;
 
 END;
