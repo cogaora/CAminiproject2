@@ -178,7 +178,7 @@ BEGIN
 						state <= memread;
 					ELSE
 						-- memory not ready to read more, wait until then
-						state <= memread;
+						state <= idle;
 					END IF;
 
 					--check if block valid and not dirty
