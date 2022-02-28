@@ -104,6 +104,7 @@ report "in idle";
 						s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
 						-- done reading go back to idle state after returning data
 						s_waitrequest <= '0';
+report "switch ack to idle";
 						state <= idle;
 
 						-- dirty
@@ -115,11 +116,13 @@ report "in idle";
 						-- not dirty, but tag not valid, 
 					ELSIF valid(set_int) = "0" AND (tags(set_int) /= tag) THEN	
 						-- should read data from memory (and load it in cache)
+report "go to read memoru";
 						state <= memread;
 					ELSE
 
 						-- means there was a miss, but data is clean 
 						-- should request data from memory and load it to cache
+report "looping back to the read checking";
 						state <= check_addr_r;
 					END IF;
 
@@ -192,10 +195,12 @@ report "no ned to write, ooping back";
 				WHEN check_addr_w =>
 					-- if either dirty or invalid and tags different, i.e. miss dirty
 					IF (dirty(set_int) = "1") AND (valid(set_int) = "0" OR tags(set_int) /= tag) THEN
+report "go to write mmeory";
 						state <= memwrite;
 					ELSE
+report "going back to idle while writing";
 						-- reset the tags to reflect recent writing
-						state <= idle;
+						state <= cwrite;
 					END IF;
 
 				WHEN cwrite =>
