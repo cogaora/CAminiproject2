@@ -150,7 +150,7 @@ BEGIN
         s_writedata <= X"14";
         WAIT UNTIL falling_edge(s_waitrequest);
 
-        -- test case for write to same address
+        -- test case for write to same address with dirty data
         WAIT FOR clk_period;
         s_addr <= "00000000000000000000000001000000";
         s_write <= '1';
@@ -158,6 +158,12 @@ BEGIN
         s_writedata <= X"12";
         WAIT UNTIL falling_edge(s_waitrequest);
 
+        -- check val correct
+        WAIT FOR clk_period;
+        s_addr <= "00000000000000000000000001000000";
+        s_write <= '0';
+        s_read <= '1';
+        ASSERT s_readdata = x"12" REPORT "error" SEVERITY error;
 
     END PROCESS;
 
