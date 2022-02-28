@@ -121,25 +121,13 @@ BEGIN
         WAIT UNTIL falling_edge(s_waitrequest);
 
         -- now, read from same address and make sure it is in cache
-        s_write <= '0';
-        s_read <= '1';
-        WAIT UNTIL falling_edge(s_waitrequest);
-        ASSERT s_readdata = x"AAAAAAAA" REPORT "error" SEVERITY error;
-        s_read <= '0';
-        s_write <= '0';
+        --s_write <= '0';
+        --s_read <= '1';
+        --WAIT UNTIL falling_edge(s_waitrequest);
+        --ASSERT s_readdata = x"AAAAAAAA" REPORT "error" SEVERITY error;
+        --s_read <= '0';
+        --s_write <= '0';
 
-        WAIT FOR clk_period;
-
-        -- test case of read clean miss - not in cache nor memory
-        s_addr <= "00000000000000000000000000000000";
-        s_read <= '1';
-        s_write <= '0';
-        WAIT UNTIL falling_edge(s_waitrequest);
-        -- expecting a bunch of zeros from memory
-        ASSERT s_readdata = x"00000000" REPORT "error" SEVERITY error;
-        -- reset both write & read signals
-        s_read <= '0';
-        s_write <= '0';
         WAIT;
 
         -- test case for 
