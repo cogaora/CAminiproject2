@@ -88,13 +88,14 @@ report "in idle";
 					ELSIF s_read = '1' THEN
 						state <= check_addr_r;
 					ELSE
-						s_waitrequest <= '0'; -- nothing is happening anymore
+					
 						state <= idle;
 					END IF;
 
 					-- verify if we have a valid address for reading from memory
 				WHEN check_addr_r =>
 				-- hit
+report "read address";
 					IF (valid(set_int) = "1") AND (tags(set_int) = tag) THEN
 						-- start reading from cache and writing to the output read data vector
 						-- each block stores 16 bytes of data, i.e. 4 words, we wish to access 1 word
@@ -108,13 +109,13 @@ report "switch ack to idle";
 						state <= idle;
 
 						-- dirty
-					ELSIF dirty(set_int) = "1" AND (tags(set_int) /= tag) THEN
+					ELSIF dirty(set_int) = "1" THEN
 	report "branching to the memwrite";
 						-- write back to memory
 						state <= memwrite_then_read;
 
 						-- not dirty, but tag not valid, 
-					ELSIF valid(set_int) = "0" AND (tags(set_int) /= tag) THEN	
+					ELSIF valid(set_int) = "0" THEN	
 						-- should read data from memory (and load it in cache)
 report "go to read memoru";
 						state <= memread;
@@ -204,6 +205,7 @@ report "going back to idle while writing";
 					END IF;
 
 				WHEN cwrite =>
+report "writing data to cache";
 					CacheBlock(set_int)((block_offset_int + 1) * 32 - 1 DOWNTO block_offset_int * 32) <= s_writedata;
 					dirty(set_int) <= "1";
 					valid(set_int) <= "1";

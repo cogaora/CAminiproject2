@@ -131,6 +131,7 @@ BEGIN
         -- now, read from same address and make sure it is in cache
         s_write <= '0';
         s_read <= '1';
+wait for clk_period;
 report "hey from here befroe reading";
         WAIT UNTIL rising_edge(s_waitrequest);
 report" done reading";
@@ -139,7 +140,6 @@ report" done reading";
         s_write <= '0';
 
         WAIT FOR clk_period;
-report "leoeo";
 
         -- test case of read clean miss - not in cache nor memory
         s_addr <= "00000000000000000000000000000000";

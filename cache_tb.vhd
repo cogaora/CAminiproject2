@@ -131,6 +131,7 @@ BEGIN
         -- now, read from same address and make sure it is in cache
         s_write <= '0';
         s_read <= '1';
+
 report "hey from here befroe reading";
         WAIT UNTIL rising_edge(s_waitrequest);
 report" done reading";
