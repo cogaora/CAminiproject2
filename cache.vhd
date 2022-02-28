@@ -81,7 +81,7 @@ BEGIN
 			CASE state IS
 					-- starting in default state
 				WHEN idle =>
-					REPORT "in idle";
+					--REPORT "in idle";
 					s_waitrequest <= '1'; -- something is happening signal it to cache operator?
 					IF s_write = '1' THEN
 						state <= check_addr_w;

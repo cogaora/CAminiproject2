@@ -59,13 +59,13 @@ BEGIN
 		set_int := to_integer(unsigned(set));
 
 		--initalise cache and dirty/valid vector
-		IF (now < 1 ps) THEN
-			FOR i IN 0 TO cache_size - 1 LOOP
-				CacheBlock(i) <= STD_LOGIC_VECTOR(to_unsigned(i MOD 256, 128));
-				dirty(i) <= "0";
-				valid(i) <= "0";
-			END LOOP;
-		END IF;
+		--IF (now < 1 ps) THEN
+		--	FOR i IN 0 TO cache_size - 1 LOOP
+		--		CacheBlock(i) <= STD_LOGIC_VECTOR(to_unsigned(i MOD 256, 128));
+		--		dirty(i) <= "0";
+		--		valid(i) <= "0";
+		--	END LOOP;
+		--END IF;
 
 		-- if reset, re-init cache & bits
 		IF (reset = '1') THEN
@@ -81,20 +81,20 @@ BEGIN
 			CASE state IS
 					-- starting in default state
 				WHEN idle =>
-report "in idle";
+					REPORT "in idle";
 					s_waitrequest <= '1'; -- something is happening signal it to cache operator?
 					IF s_write = '1' THEN
 						state <= check_addr_w;
 					ELSIF s_read = '1' THEN
 						state <= check_addr_r;
 					ELSE
-					
 						state <= idle;
 					END IF;
 
 					-- verify if we have a valid address for reading from memory
 				WHEN check_addr_r =>
-				-- hit
+					-- hit
+					REPORT "read address";
 					IF (valid(set_int) = "1") AND (tags(set_int) = tag) THEN
 						-- start reading from cache and writing to the output read data vector
 						-- each block stores 16 bytes of data, i.e. 4 words, we wish to access 1 word
@@ -104,33 +104,31 @@ report "in idle";
 						s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
 						-- done reading go back to idle state after returning data
 						s_waitrequest <= '0';
-report "switch ack to idle";
+						REPORT "switch ack to idle";
 						state <= idle;
 
 						-- dirty
 					ELSIF dirty(set_int) = "1" THEN
-	report "branching to the memwrite";
+						REPORT "branching to the memwrite";
 						-- write back to memory
 						state <= memwrite_then_read;
 
 						-- not dirty, but tag not valid, 
-					ELSIF valid(set_int) = "0" THEN	
+					ELSIF valid(set_int) = "0" THEN
 						-- should read data from memory (and load it in cache)
-report "go to read memoru";
+						REPORT "go to read memoru";
 						state <= memread;
 					ELSE
 
 						-- means there was a miss, but data is clean 
 						-- should request data from memory and load it to cache
-report "looping back to the read checking";
+						REPORT "looping back to the read checking";
 						state <= check_addr_r;
 					END IF;
-
-
 				WHEN memwrite_then_read =>
-report "mem write starting";
+					REPORT "mem write starting";
 					IF m_waitrequest = '1' AND mem_bytes_offset <= 3 THEN
-report "starting to write to memory";
+						REPORT "starting to write to memory";
 						-- define the 15 bits address to replace block in memory
 						m_addr <= (to_integer(unsigned(s_addr(14 DOWNTO 0)))) + mem_bytes_offset;
 						m_read <= '0';
@@ -139,11 +137,11 @@ report "starting to write to memory";
 						mem_bytes_offset := mem_bytes_offset + 1;
 						state <= memwrite_then_read;
 					ELSIF mem_bytes_offset > 3 THEN
-report "done writing to memory";
+						REPORT "done writing to memory";
 						mem_bytes_offset := 0;
 						state <= memread;
 					ELSE
-report "no ned to write, ooping back";
+						REPORT "no ned to write, ooping back";
 						m_write <= '0';
 						state <= memwrite_then_read;
 					END IF;
@@ -195,16 +193,14 @@ report "no ned to write, ooping back";
 				WHEN check_addr_w =>
 					-- if either dirty or invalid and tags different, i.e. miss dirty
 					IF (dirty(set_int) = "1") AND (valid(set_int) = "0" OR tags(set_int) /= tag) THEN
-report "go to write mmeory";
 						state <= memwrite;
 					ELSE
-report "going back to idle while writing";
 						-- reset the tags to reflect recent writing
 						state <= cwrite;
 					END IF;
 
 				WHEN cwrite =>
-report "writing data to cache";
+					REPORT "writing data to cache";
 					CacheBlock(set_int)((block_offset_int + 1) * 32 - 1 DOWNTO block_offset_int * 32) <= s_writedata;
 					dirty(set_int) <= "1";
 					valid(set_int) <= "1";

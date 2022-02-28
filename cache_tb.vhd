@@ -143,14 +143,12 @@ BEGIN
         s_addr <= "00000000000000000000000000000000";
         s_read <= '1';
         s_write <= '0';
-        WAIT UNTIL rising_edge(s_waitrequest);
+        WAIT UNTIL falling_edge(s_waitrequest);
         -- expecting a bunch of zeros from memory
         ASSERT s_readdata = x"00000000" REPORT "error" SEVERITY error;
         -- reset both write & read signals
         s_read <= '0';
         s_write <= '0';
-        REPORT "helloe";
-
         WAIT;
 
         -- test case for 
