@@ -124,13 +124,13 @@ BEGIN
         s_write <= '1';
         s_read <= '0';
         s_writedata <= x"AAAAAAAA";
-        WAIT UNTIL rising_edge(s_waitrequest);
+        WAIT UNTIL falling_edge(s_waitrequest);
 
         -- now, read from same address and make sure it is in cache
         s_write <= '0';
         s_read <= '1';
         REPORT "hey from here befroe reading";
-        WAIT UNTIL rising_edge(s_waitrequest);
+        WAIT UNTIL falling_edge(s_waitrequest);
 
         REPORT" done reading";
         ASSERT s_readdata = x"AAAAAAAA" REPORT "write unsuccessful" SEVERITY error;
