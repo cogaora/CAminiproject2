@@ -112,12 +112,6 @@ BEGIN
 
     test_process : PROCESS
     BEGIN
-        -- cases that cannot happen
-        -- read, miss, dirty (if dirty 1) should be sync with memory + 2) then should be in memory)
-        -- read, hit, dirty (cache should be in sync with memory)
-        -- write, miss, dirty (cache should be updated over memory)
-        -- write, hit, dirty (cache should be in sync with memory (not possible per our fsm))
-
         WAIT FOR clk_period;
         -- test 2 cases: write miss, not in memory and then valid read wo/ dirty
         s_addr <= "00000000000000000000100000001000";
@@ -129,11 +123,8 @@ BEGIN
         -- now, read from same address and make sure it is in cache
         s_write <= '0';
         s_read <= '1';
-        REPORT "hey from here befroe reading";
         WAIT UNTIL falling_edge(s_waitrequest);
-
-        REPORT" done reading";
-        ASSERT s_readdata = x"AAAAAAAA" REPORT "write unsuccessful" SEVERITY error;
+        ASSERT s_readdata = x"AAAAAAAA" REPORT "error" SEVERITY error;
         s_read <= '0';
         s_write <= '0';
 
