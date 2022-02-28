@@ -142,7 +142,23 @@ BEGIN
         s_write <= '0';
         WAIT;
 
-        -- test case for 
+        -- test case for write hit
+        WAIT FOR clk_period;
+        s_addr <= "00000000000000000000000001000000";
+        s_write <= '1';
+        s_read <= '0';
+        s_writedata <= X"14";
+        WAIT UNTIL falling_edge(s_waitrequest);
+
+        -- test case for write to same address
+        WAIT FOR clk_period;
+        s_addr <= "00000000000000000000000001000000";
+        s_write <= '1';
+        s_read <= '0';
+        s_writedata <= X"12";
+        WAIT UNTIL falling_edge(s_waitrequest);
+
+
     END PROCESS;
 
 END;
