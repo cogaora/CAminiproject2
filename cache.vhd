@@ -59,13 +59,13 @@ BEGIN
 		set_int := to_integer(unsigned(set));
 
 		--initalise cache and dirty/valid vector
-		IF (now < 1 ps) THEN
-			FOR i IN 0 TO cache_size - 1 LOOP
-				CacheBlock(i) <= STD_LOGIC_VECTOR(to_unsigned(i MOD 256, 128));
-				dirty(i) <= "0";
-				valid(i) <= "0";
-			END LOOP;
-		END IF;
+		--IF (now < 1 ps) THEN
+		--	FOR i IN 0 TO cache_size - 1 LOOP
+		--		CacheBlock(i) <= STD_LOGIC_VECTOR(to_unsigned(i MOD 256, 128));
+		--		dirty(i) <= "0";
+		--		valid(i) <= "0";
+		--	END LOOP;
+		--END IF;
 
 		-- if reset, re-init cache & bits
 		IF (reset = '1') THEN

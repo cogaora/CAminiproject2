@@ -122,7 +122,7 @@ BEGIN
         REPORT "helloe";
 
         -- test 2 cases: write miss, not in memory and then valid read wo/ dirty
-        s_addr <= "00000000000000000000000000001000";
+        s_addr <= "00000000000000000000100000001000";
         s_write <= '1';
         s_read <= '0';
         s_writedata <= x"AAAAAAAA";
@@ -131,7 +131,7 @@ BEGIN
         s_write <= '0';
         s_read <= '1';
         WAIT UNTIL rising_edge(s_waitrequest);
-        ASSERT s_readdata = x"AAAAAAAA" REPORT "write unsuccessful" SEVERITY error;
+        ASSERT s_readdata = x"AAAAAAAA" REPORT "error" SEVERITY error;
         s_read <= '0';
         s_write <= '0';
 
@@ -143,12 +143,10 @@ BEGIN
         s_write <= '0';
         WAIT UNTIL rising_edge(s_waitrequest);
         -- expecting a bunch of zeros from memory
-        ASSERT s_readdata = x"00000000" REPORT "write unsuccessful" SEVERITY error;
+        ASSERT s_readdata = x"00000000" REPORT "error" SEVERITY error;
         -- reset both write & read signals
         s_read <= '0';
         s_write <= '0';
-
-        WAIT FOR clk_period;
 
         WAIT;
 
