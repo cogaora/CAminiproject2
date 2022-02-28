@@ -81,7 +81,7 @@ BEGIN
 			CASE state IS
 					-- starting in default state
 				WHEN idle =>
-					REPORT "in idle";
+					--REPORT "in idle";
 					s_waitrequest <= '1'; -- something is happening signal it to cache operator?
 					IF s_write = '1' THEN
 						state <= check_addr_w;
@@ -104,31 +104,25 @@ BEGIN
 						s_readdata <= CacheBlock(set_int)((32 * (block_offset_int + 1)) - 1 DOWNTO 32 * block_offset_int);
 						-- done reading go back to idle state after returning data
 						s_waitrequest <= '0';
-						REPORT "switch ack to idle";
 						state <= idle;
 
 						-- dirty
 					ELSIF dirty(set_int) = "1" THEN
-						REPORT "branching to the memwrite";
 						-- write back to memory
 						state <= memwrite_then_read;
 
 						-- not dirty, but tag not valid, 
 					ELSIF valid(set_int) = "0" THEN
 						-- should read data from memory (and load it in cache)
-						REPORT "go to read memoru";
 						state <= memread;
 					ELSE
 
 						-- means there was a miss, but data is clean 
 						-- should request data from memory and load it to cache
-						REPORT "looping back to the read checking";
 						state <= check_addr_r;
 					END IF;
 				WHEN memwrite_then_read =>
-					REPORT "mem write starting";
 					IF m_waitrequest = '1' AND mem_bytes_offset <= 3 THEN
-						REPORT "starting to write to memory";
 						-- define the 15 bits address to replace block in memory
 						m_addr <= (to_integer(unsigned(s_addr(14 DOWNTO 0)))) + mem_bytes_offset;
 						m_read <= '0';
@@ -137,11 +131,9 @@ BEGIN
 						mem_bytes_offset := mem_bytes_offset + 1;
 						state <= memwrite_then_read;
 					ELSIF mem_bytes_offset > 3 THEN
-						REPORT "done writing to memory";
 						mem_bytes_offset := 0;
 						state <= memread;
 					ELSE
-						REPORT "no ned to write, ooping back";
 						m_write <= '0';
 						state <= memwrite_then_read;
 					END IF;
